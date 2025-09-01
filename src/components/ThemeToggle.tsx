@@ -2,7 +2,7 @@ import './globals.css';
 import { ReactNode } from 'react';
 import Link from 'next/link';
 import AuthButtons from '@/components/AuthButtons';
-import { ThemeProvider } from '@/components/ThemeProvider';
+import ThemeProvider from '@/components/ThemeProvider';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export const metadata = {
