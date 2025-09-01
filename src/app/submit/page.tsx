@@ -1,6 +1,7 @@
 'use client';
 import { FormEvent, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { Save, Upload, Code, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
@@ -94,87 +95,157 @@ export default function SubmitPage() {
   };
 
   return (
-    <div className="max-w-3xl rounded-2xl bg-white p-6 shadow">
-      <h1 className="mb-4 text-2xl font-bold">Add Solve (Manual)</h1>
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Question Title *</label>
-          <input className="mt-1 w-full rounded-lg border px-3 py-2"
-                 value={title} onChange={e => setTitle(e.target.value)} required />
-        </div>
+    <div className="flex-1 p-8 max-w-4xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-[#f8fafc] mb-2">Log Your Progress</h1>
+        <p className="text-[#cbd5e1]">Track your problem-solving journey and maintain your streak</p>
+      </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="card p-8">
+        <form onSubmit={onSubmit} className="space-y-6">
+          {/* Question Title */}
           <div>
-            <label className="block text-sm font-medium">Platform</label>
-            <input
-              className="mt-1 w-full rounded-lg border px-3 py-2"
-              value={platform}
-              onChange={e => setPlatform(e.target.value)}
-              placeholder="e.g. LeetCode, Codeforces"
+            <label className="block text-sm font-semibold text-[#f8fafc] mb-2">
+              Question Title *
+            </label>
+            <input 
+              className="input-field w-full"
+              value={title} 
+              onChange={e => setTitle(e.target.value)} 
+              placeholder="e.g. Two Sum, Valid Parentheses"
+              required 
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium">Link/ID</label>
-            <input className="mt-1 w-full rounded-lg border px-3 py-2"
-                   value={platformRef} onChange={e => setPlatformRef(e.target.value)}
-                   placeholder="Enter problem link or ID" />
+
+          {/* Platform, Link, Difficulty */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <div>
+              <label className="block text-sm font-semibold text-[#f8fafc] mb-2">Platform</label>
+              <input
+                className="input-field w-full"
+                value={platform}
+                onChange={e => setPlatform(e.target.value)}
+                placeholder="LeetCode, Codeforces"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-[#f8fafc] mb-2">Link/ID</label>
+              <input 
+                className="input-field w-full"
+                value={platformRef} 
+                onChange={e => setPlatformRef(e.target.value)}
+                placeholder="Problem link or ID" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-[#f8fafc] mb-2">Difficulty</label>
+              <select
+                className="input-field w-full"
+                value={difficulty}
+                onChange={e => setDifficulty(e.target.value as Difficulty)}
+              >
+                <option>Easy</option>
+                <option>Medium</option>
+                <option>Hard</option>
+              </select>
+            </div>
           </div>
+
+          {/* Topics and Language */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-semibold text-[#f8fafc] mb-2">
+                Topic Tags (comma separated)
+              </label>
+              <input 
+                className="input-field w-full"
+                value={topics} 
+                onChange={e => setTopics(e.target.value)}
+                placeholder="Arrays, DP, Graphs, Trees" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-[#f8fafc] mb-2">Language</label>
+              <input
+                className="input-field w-full"
+                value={language}
+                onChange={e => setLanguage(e.target.value)}
+                placeholder="C++, Python, Java"
+              />
+            </div>
+          </div>
+
+          {/* Solution Notes */}
           <div>
-            <label htmlFor="difficulty-select" className="block text-sm font-medium">Difficulty</label>
-            <select
-              id="difficulty-select"
-              className="mt-1 w-full rounded-lg border px-3 py-2"
-              value={difficulty}
-              onChange={e => setDifficulty(e.target.value as Difficulty)}
+            <label className="block text-sm font-semibold text-[#f8fafc] mb-2">
+              <FileText className="w-4 h-4 inline mr-2" />
+              Solution Notes
+            </label>
+            <textarea 
+              className="input-field w-full h-32 resize-none"
+              value={solutionText} 
+              onChange={e => setSolutionText(e.target.value)}
+              placeholder="Describe your approach, time complexity, space complexity..."
+            />
+          </div>
+
+          {/* Code Snippet */}
+          <div>
+            <label className="block text-sm font-semibold text-[#f8fafc] mb-2">
+              <Code className="w-4 h-4 inline mr-2" />
+              Code Snippet
+            </label>
+            <textarea 
+              className="input-field w-full h-48 resize-none font-mono text-sm"
+              value={codeSnippet} 
+              onChange={e => setCodeSnippet(e.target.value)}
+              placeholder="Paste your solution code here..."
+            />
+          </div>
+
+          {/* File Upload */}
+          <div>
+            <label className="block text-sm font-semibold text-[#f8fafc] mb-2">
+              <Upload className="w-4 h-4 inline mr-2" />
+              Attachments (images/files)
+            </label>
+            <input 
+              type="file" 
+              multiple
+              className="input-field w-full file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#6366f1] file:text-white hover:file:bg-[#4f46e5] file:cursor-pointer"
+              onChange={e => setFiles(e.target.files)} 
+            />
+          </div>
+
+          {/* Submit Button */}
+          <div className="pt-4">
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="btn-primary inline-flex items-center space-x-2 px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option>Easy</option><option>Medium</option><option>Hard</option>
-            </select>
+              <Save className="w-5 h-5" />
+              <span>{loading ? 'Saving…' : 'Save Progress'}</span>
+            </button>
           </div>
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium">Topic Tags (comma separated)</label>
-          <input className="mt-1 w-full rounded-lg border px-3 py-2"
-                 value={topics} onChange={e => setTopics(e.target.value)}
-                 placeholder="e.g. Arrays, DP, Graphs" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Language</label>
-          <input
-            className="mt-1 w-full rounded-lg border px-3 py-2"
-            value={language}
-            onChange={e => setLanguage(e.target.value)}
-            placeholder="e.g. C++, Python, Java"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Solution Notes</label>
-          <textarea className="mt-1 h-28 w-full rounded-lg border px-3 py-2"
-                    value={solutionText} onChange={e => setSolutionText(e.target.value)} />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Code Snippet</label>
-          <textarea className="mt-1 h-40 w-full font-mono rounded-lg border px-3 py-2"
-                    value={codeSnippet} onChange={e => setCodeSnippet(e.target.value)} />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Attachments (images/files)</label>
-          <input type="file" multiple
-                 className="mt-1 w-full rounded-lg border px-3 py-2"
-                 onChange={e => setFiles(e.target.files)} />
-        </div>
-
-        <button type="submit" disabled={loading}
-                className="rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-500 disabled:opacity-50">
-          {loading ? 'Saving…' : 'Save Solve'}
-        </button>
-
-        {msg && <p className="pt-2 text-sm">{msg}</p>}
-      </form>
+          {/* Message */}
+          {msg && (
+            <div className={`flex items-center space-x-2 p-4 rounded-lg ${
+              msg.includes('✅') 
+                ? 'bg-[#10b981] bg-opacity-20 text-[#10b981] border border-[#10b981]' 
+                : 'bg-[#ef4444] bg-opacity-20 text-[#ef4444] border border-[#ef4444]'
+            }`}>
+              {msg.includes('✅') ? (
+                <CheckCircle className="w-5 h-5" />
+              ) : (
+                <AlertCircle className="w-5 h-5" />
+              )}
+              <span className="font-medium">{msg}</span>
+            </div>
+          )}
+        </form>
+      </div>
     </div>
   );
 }
