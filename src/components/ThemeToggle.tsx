@@ -1,22 +1,16 @@
-'use client';
+"use client";
+import { useTheme } from "./ThemeProvider";
 
-import { useTheme } from 'next-themes';
-import { Sun, Moon } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useAnimations } from '@/lib/useAnimations';
-
-export const ThemeToggle = () => {
-  const { theme, setTheme } = useTheme();
-  const { themeToggleAnimation, rotateThemeToggle } = useAnimations();
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-    rotateThemeToggle();
-  };
-
+export default function ThemeToggle() {
+  const { theme, toggle } = useTheme();
   return (
-    <motion.button onClick={toggleTheme} animate={themeToggleAnimation} variants={{ rotate: { rotate: 360 } }} transition={{ duration: 0.3 }}>
-      {theme === 'dark' ? <Sun /> : <Moon />}
-    </motion.button>
+    <button
+      onClick={toggle}
+      className="rounded-lg px-3 py-2 text-sm font-medium transition-colors bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-700"
+      aria-label="Toggle theme"
+      type="button"
+    >
+      {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
+    </button>
   );
-};
+}
